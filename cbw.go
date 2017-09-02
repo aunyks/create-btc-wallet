@@ -113,14 +113,14 @@ func main() {
       println("Chose to print wallet data to the terminal.")
       terminal = true
     }
-    println("Awesome! Creating Bitcoin wallet...")
+    println("Awesome! Creating Bitcoin wallet...\n")
     // Now create the wallet
     priv, pubX, pubY := createKeyPair()
     privateKey := wifPrivateKey(priv)
     address := createAddress(pubX, pubY)
     if(terminal){
       println("Private Key:\n" + privateKey)
-      println("Address:\n" + address)
+      println("Address:\n" + address + "\n")
     } else {
       newWallet := JSONWallet{privateKey, address}
       jsonBytes, _ := json.MarshalIndent(newWallet, "", "\t")
