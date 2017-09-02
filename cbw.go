@@ -21,11 +21,24 @@ type JSONWallet struct {
   //Address string
 }
 
+// TO BE REFACTORED:
+// Although this function *happens* to generate a valid
+// Bitcoin private key, the associated public key does 
+// not satisfy that of a point on the secp256k1 curve.
+// 
+// This is why we are ignoring the public key / address
+// until I finish developing a purely Go secp256k1 library
 func createKeyPair() (big.Int, big.Int, big.Int){
 	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
   return *(privateKey.D), *(privateKey.PublicKey.X), *(privateKey.PublicKey.Y)
 }
 
+// Hash a given set of bytes.
+// The only two hash functions relevant to this project
+// are sha256 and ripemd160.
+//
+// So, the calling process can specify with which
+// function to hash the bytes
 func hashBytes(bytes []byte, hashType string) []byte {
   var hashFunc hash.Hash
   if(hashType == "sha"){
@@ -37,6 +50,15 @@ func hashBytes(bytes []byte, hashType string) []byte {
   return hashFunc.Sum(nil)
 }
 
+// TO BE REFACTORED:
+// This function's original use was to generate a 
+// Bitcoin address that corresponds with a previously
+// generated private key. Due to Go's lack of a pure Go
+// secp256k1 curve library, however, addresses generated
+// did not match with private keys.
+//
+// While I develop a secp256k1 elliptic curve library in Go,
+// This function is to be ignored in current versions of cbw.
 func createAddress(curveX big.Int, curveY big.Int) string {
   sixtyFiveByte := append(append([]byte{0x04}, curveX.Bytes()...), curveY.Bytes()...)
   shaHashed := hashBytes(sixtyFiveByte, "sha")
@@ -48,6 +70,8 @@ func createAddress(curveX big.Int, curveY big.Int) string {
   return base58.Encode(addressBytes)
 }
 
+// Generate a new Wallet Import Format (WIF)-compatible
+// private key
 func wifPrivateKey(privKey big.Int) string {
   addedVersionByte := append([]byte{0x80}, privKey.Bytes()...)
   firstHash := hashBytes(addedVersionByte, "sha")
@@ -57,14 +81,18 @@ func wifPrivateKey(privKey big.Int) string {
   return base58.Encode(keyToEncode)
 }
 
+// Just a locally used utility function
 func println(msg string) {
   fmt.Println(msg)
 }
 
+// Just a locally used utility function
 func print(msg string) {
   fmt.Print(msg)
 }
 
+// Ask the user a question via stdout
+// and read the response via stdin
 func prompt(inquiry string) string {
   reader := bufio.NewReader(os.Stdin)
   print(inquiry + " ");
@@ -72,11 +100,19 @@ func prompt(inquiry string) string {
   return text[0 : len(text) - 1]
 }
 
+// Something went wrong! Let the user know
+// and exit immediately
 func panic(mayday string) {
   println(mayday)
   os.Exit(0)
 }
 
+// Prompt the user with two options. Then let the calling
+// process know which response was given via a boolean
+// value (true is for the a value, false for the b value).
+//
+// If neither are provided. We panic before any more processing
+// is handled
 func promptABTest(inquiry string, a string, b string) bool {
   response := prompt(inquiry)
   if(response == a){
@@ -125,8 +161,11 @@ func main() {
       println("")
     } else {
       newWallet := JSONWallet{privateKey}//, address}
+      // Convert the wallet data to a JSON string
       jsonBytes, _ := json.MarshalIndent(newWallet, "", "\t")
       jsonPayload := string(jsonBytes)
+      // Write the JSON payload string to a file.
+      // If an error occurs then we panic
       file, err := os.OpenFile("wallet.json", os.O_WRONLY|os.O_CREATE, 0666)
       if err != nil {
           panic("Uh oh! Wallet file can't be created.")
@@ -137,6 +176,8 @@ func main() {
       fmt.Fprint(w, jsonPayload)
   
       w.Flush()
+      // Upon success, we let the user know that we're
+      // done and where the new file is!
       cwd, err := os.Getwd()
       println("Done! Wallet file location:\n" + cwd + fmt.Sprintf("%c", os.PathSeparator) + "wallet.json")
     }
