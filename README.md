@@ -1,7 +1,7 @@
 # create-btc-wallet
-Create a new Bitcoin wallet right from the command line!  
+## Create a new Bitcoin wallet right from the command line!  
 
-*Dependencies*  
+*Dependencies:*  
 Go  
 
 **Get Started**  
