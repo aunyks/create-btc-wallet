@@ -1,5 +1,6 @@
 # create-btc-wallet
-## Create a new Bitcoin wallet right from the command line!  
+**Create  a new Bitcoin wallet right from the command line!**  
+*Warning: This project is experimental. Please use at your own risk. The author is not liable for any loss of funds attributed to the use of this software.*  
 
 *Dependencies:*  
 Go  
