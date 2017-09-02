@@ -1,6 +1,7 @@
 # create-btc-wallet
 **Create  a new Bitcoin wallet right from the command line!**  
 *Warning: This project is experimental. Please use at your own risk. The author is not liable for any loss of funds attributed to the use of this software.*  
+*Note: While development of a pure Go implementation of the secp256k1 elliptic curve digital signature algorithm is underway, CBW will only provide you with a valid private key to import into a wallet client, not a public key.*  
 
 *Dependencies:*  
 Go  

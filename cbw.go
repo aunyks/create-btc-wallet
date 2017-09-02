@@ -18,7 +18,7 @@ import (
 
 type JSONWallet struct {
   PrivateKey string
-  Address string
+  //Address string
 }
 
 func createKeyPair() (big.Int, big.Int, big.Int){
@@ -115,14 +115,16 @@ func main() {
     }
     println("Awesome! Creating Bitcoin wallet...\n")
     // Now create the wallet
-    priv, pubX, pubY := createKeyPair()
+    //priv, pubX, pubY := createKeyPair()
+    priv, _,_ := createKeyPair()
     privateKey := wifPrivateKey(priv)
-    address := createAddress(pubX, pubY)
+    //address := createAddress(pubX, pubY)
     if(terminal){
       println("Private Key:\n" + privateKey)
-      println("Address:\n" + address + "\n")
+      //println("Address:\n" + address)
+      println("")
     } else {
-      newWallet := JSONWallet{privateKey, address}
+      newWallet := JSONWallet{privateKey}//, address}
       jsonBytes, _ := json.MarshalIndent(newWallet, "", "\t")
       jsonPayload := string(jsonBytes)
       file, err := os.OpenFile("wallet.json", os.O_WRONLY|os.O_CREATE, 0666)
